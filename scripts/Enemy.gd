@@ -1,11 +1,10 @@
-extends KinematicBody2D
+extends CharacterBody2D
 
-export (int) var speed = -400
-export (int) var GRAVITY = 1200
+@export var speed: int = -400
+@export var GRAVITY: int = 1200
 
 const UP = Vector2(0,-1)
 
-var velocity = Vector2()
 
 func _process(delta):
 
@@ -15,4 +14,7 @@ func _process(delta):
 func _physics_process(delta):
 	velocity.y += delta * GRAVITY
 	velocity.x = speed
-	velocity = move_and_slide(velocity, UP)
+	set_velocity(velocity)
+	set_up_direction(UP)
+	move_and_slide()
+	velocity = velocity

@@ -1,15 +1,14 @@
-extends KinematicBody2D
+extends CharacterBody2D
 
-export (int) var speed = 400
-export (int) var GRAVITY = 1200
-export (int) var jump_speed = -400
+@export var speed: int = 400
+@export var GRAVITY: int = 1400
+@export var jump_speed: int = -600
 
 const UP = Vector2(0,-1)
 
-var velocity = Vector2()
-
-onready var animator = self.get_node("Animator")
-onready var sprite = self.get_node("Sprite")
+@onready var animator = self.get_node("Animator")
+@onready var sprite = self.get_node("Sprite2D")
+@onready var particle = $GPUParticles2D
 
 
 func get_input():
@@ -18,13 +17,22 @@ func get_input():
 		velocity.y = jump_speed
 	if Input.is_action_pressed('right'):
 		velocity.x += speed
-	if Input.is_action_pressed('left'):
+		if is_on_floor():
+			particle.set_emitting(true)
+	elif Input.is_action_pressed('left'):
 		velocity.x -= speed
+		if is_on_floor():
+			particle.set_emitting(true)
+	else:
+		particle.set_emitting(false)
 
 func _physics_process(delta):
 	velocity.y += delta * GRAVITY
 	get_input()
-	velocity = move_and_slide(velocity, UP)
+	set_velocity(velocity)
+	set_up_direction(UP)
+	move_and_slide()
+	velocity = velocity
 
 func _process(delta):
 	if velocity.y != 0:
